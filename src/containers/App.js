@@ -1,12 +1,14 @@
 import React from "react";
+import {connect} from "react-redux"
 import { BrowserRouter as Router, Route, NavLink, Switch } from "react-router-dom";
 import AddUpdateuserForm from "./../components/AddUpdateuserForm";
 import Navigation from "./../components/Navigation";
 import UserCardList from "./../components/UserCardList";
+import * as actionCreator from "./../actions";
 
 
 
-export default class App extends React.Component {
+class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -14,22 +16,12 @@ export default class App extends React.Component {
             job: "",
         };
         this.handlerInputChange = this.handlerInputChange.bind(this);
-        this.storeUpdate = this.storeUpdate.bind(this);
         this.handlerButtonClickAdd =this.handlerButtonClickAdd.bind(this);
         this.handlerButtonClickUpdate =this.handlerButtonClickUpdate.bind(this);
     }
 
-    componentDidMount() {
-        this.unSubscribe = this.props.store.subscribe(this.storeUpdate); //load data from server
-        this.props.load()(this.props.store.dispatch);
-    }
-
-    componentWillUnmount(){
-        this.unSubscribe(); 
-    }
-
-    storeUpdate(){
-        this.setState({})
+    componentDidMount() {        
+        this.props.load();
     }
 
     handlerButtonClickAdd(){
@@ -71,10 +63,26 @@ export default class App extends React.Component {
                                 handlerButtonClick={this.handlerButtonClickUpdate}
                             />}
                         />
-                        <Route render={() => <UserCardList data={this.props.store.getState().userReducer.data} />} />
+                        <Route render={() => <UserCardList data={this.props.data} />} />
                     </Switch>
                 </div>
             </Router>
         )
-    }
+    } 
 }
+
+function mapStateToProps(state){
+    return {
+        data: state.userReducer.data
+    };
+}
+
+function mapDispatchToProps(dispatch){
+    return {
+        load: ()=>actionCreator.load()(dispatch),
+        handlerButtonClickAdd : actionCreator.handlerButtonClickAdd,
+        handlerButtonClickUpdate:actionCreator.handlerButtonClickUpdate,
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

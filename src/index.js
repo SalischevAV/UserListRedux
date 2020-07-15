@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import {createStore} from "redux";
 import App from "./containers/App";
 import userReducer from "./reducers";
-import * as actionCreator from "./actions";
+import {Provider} from "react-redux";
 
 const root = document.getElementById("root");
 
@@ -15,11 +15,8 @@ store.subscribe(
  );
 
 ReactDOM.render(
-    <App 
-        store={store} 
-        load={actionCreator.load}
-        handlerButtonClickAdd={actionCreator.handlerButtonClickAdd}
-        handlerButtonClickUpdate={actionCreator.handlerButtonClickUpdate}
-    />,
+   <Provider store={store}>
+       <App />
+   </Provider>,
     root
 );
